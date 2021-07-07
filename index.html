@@ -1,0 +1,53 @@
+<?php
+    session_start();
+    $token_byte = openssl_random_pseudo_bytes(16);
+    $_SESSION["token"] = $token = bin2hex($token_byte);
+?>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="Description" content="Enter your description here"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<title>yahoo_news</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div id="view"></div> 
+                <input type="hidden" name="" value="<?=$token?>" id="token">
+                <button class="btn btn-primary" id="btn" type="button">yahoo_newsを取得する</button>
+            </div>
+        </div>
+    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+<script>
+    document.getElementById("btn").addEventListener("click",function(){
+        $.ajax({
+            type: "post",
+            url: "./yahoo_news.php",
+            data:{token:document.getElementById("token").value},
+            dataType: "json",
+            success: function (response) {
+                if(response){
+                    document.getElementById("view").innerHTML = ((res)=>{
+                        var str = "";
+                        for (const key in res) {
+                            str+=res[key] + "<br>";
+                        }
+                        return str;
+                    })(response.view);
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>
